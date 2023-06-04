@@ -17,7 +17,7 @@ ytdl_format_options = {
     'restrictfilenames': True,
     'noplaylist': True,
     'nocheckcertificate': True,
-    'ignoreerrors': False,
+    'ignoreerrors': True,
     'logtostderr': False,
     'quiet': True,
     'no_warnings': True,
@@ -95,18 +95,17 @@ class Music(commands.Cog):
         newData = []
         if 'watch' not in url:
             data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url=url, download=False))
-
             if 'entries' in data:
                 # take a playlist
                 newData = data['entries']
         if (len(newData) != 0):
             random.shuffle(newData)
             for ghneya in newData:
-                source = await YTDLSource.from_url(url=ghneya["webpage_url"],
+                if(ghneya is not None):
+                    source = await YTDLSource.from_url(url=ghneya["webpage_url"],
                                                     loop=self.bot.loop,
                                                     stream=True)
-
-                await player.queue.put(source)
+                    await player.queue.put(source)
         else:
             source = await YTDLSource.from_url(
                 url=url,
