@@ -3,3 +3,4 @@
 /__pycache__
 ffmpeg
 ffmpeg.exe
+*.mp3
