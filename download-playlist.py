@@ -7,5 +7,5 @@ ytdl_format_options = {
 }
 ytdl = yt_dlp.YoutubeDL(ytdl_format_options)
 url = input("Youtube Video/Playlist link : ")
-ytdl.extract_info(url, download=True)
+ytdl.extract_info(url, download=True,force_generic_extractor=True)
 

@@ -111,45 +111,12 @@ class Music(commands.Cog):
                 url=url,
                 loop=self.bot.loop,
                 stream=True)
-
             await player.queue.put(source)
-
-    # @commands.command(name='p')
-    # async def play(self, ctx, *, url):
-    #     """Streams from a url (same as yt, but doesn't predownload)"""
-    #     await ctx.typing()
-    #     player = self.get_player(ctx)
-    #     loop = asyncio.get_event_loop()
-    #     newData = []
-    #     if 'watch' not in url:
-    #         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url=url, download=True))
-
-    #         if 'entries' in data:
-    #             # take a playlist
-    #             newData = data['entries']
-    #     if (len(newData) != 0):
-    #         random.shuffle(newData)
-    #         for ghneya in newData:
-    #             source = await YTDLSource.from_url(url=ghneya["webpage_url"],
-    #                                                 loop=self.bot.loop,
-    #                                                 stream=False)
-
-    #             await player.queue.put(source)
-    #     else:
-    #         source = await YTDLSource.from_url(
-    #             url=url,
-    #             loop=self.bot.loop,
-    #             stream=False)
-
-    #         await player.queue.put(source)
-            
     @commands.command(name='volume')
     async def volume(self, ctx, volume: int):
         """Changes the player's volume"""
-
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
-
         ctx.voice_client.source.volume = volume / 100
         await ctx.send(f"Changed volume to {volume}%")
 

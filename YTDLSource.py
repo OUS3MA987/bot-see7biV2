@@ -2,8 +2,11 @@ import asyncio
 from functools import partial
 import discord
 import yt_dlp
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 yt_dlp.utils.bug_reports_message = lambda: ''
-
+client_credentials_manager = SpotifyClientCredentials(client_id="d90b3da85a5f45c0868ac21cbd96e238",client_secret="57af2268d1914c4fa371e68f4df334dc")
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
@@ -49,6 +52,15 @@ class YTDLSource(discord.PCMVolumeTransformer):
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(executable='./ffmpeg.exe', source=filename, **ffmpeg_options), data=data)
 
+    @classmethod
+    async def from_id(cls, id, *, loop=None):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: sp.track(id))
+        data['webpage_url']=data['preview_url']
+        data['url']=data['preview_url']
+        data['title']=data['name']
+        return cls(discord.FFmpegPCMAudio(executable='./ffmpeg.exe', source=data['preview_url'], **ffmpeg_options),data=data)
+    
     @classmethod
     async def regather_stream(cls, data, *, loop):
         """Used for preparing a stream, instead of downloading.
